@@ -20,16 +20,30 @@
     <header>
       <nav class="container flex items-center py-4 mt-4 sm:mt-12">
         <div class="py-1"><img src="imgs/logo-bookmark.svg" alt="" /></div>
-        <ul class="hidden sm:flex flex-1 justify-end items-center gap-12 text-bookmark-blue uppercase text-xs">
-            <li class="cursor-pointer"><a href="/checkoutdailys">CheckOutS</a></li>
-            <li class="cursor-pointer"><a href="/dailys">CheckInS</a></li>
-            <li class="cursor-pointer"><a href="/checks">Checks</a></li>
-          <button type="button" class="bg-bookmark-red text-white rounded-md px-7 py-3 uppercase">Login</button>
-        </ul>
-        <div class="flex sm:hidden flex-1 justify-end">
-          <i class="text-2xl fas fa-bars"></i>
+      
+        <!-- Dropdown menu -->
+        <div class="relative ml-auto sm:hidden">
+          <button type="button" class="flex items-center text-bookmark-blue focus:outline-none" onclick="toggleDropdown()">
+            <i class="text-2xl fas fa-bars"></i>
+          </button>
+          <ul class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg hidden" id="dropdownMenu">
+            <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/checkoutdailys">CheckOutS</a></li>
+            <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/dailys">CheckInS</a></li>
+            <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><button type="button" class="text-bookmark-red">Logout</button></li>
+          </ul>
         </div>
+      
+        <!-- Menu items -->
+        <ul class="hidden sm:flex flex-1 justify-end items-center gap-12 text-bookmark-blue uppercase text-xs" id="menuItems">
+          <li class="cursor-pointer"><a href="/checkoutdailys">CheckOutS</a></li>
+          <li class="cursor-pointer"><a href="/dailys">CheckInS</a></li>
+          <li class="cursor-pointer"><a href="/checks">Checks</a></li>
+          <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/logout" class="text-bookmark-red">Logout</a></li>
+        </ul>
       </nav>
+      
+      
+      
     </header>
 
     <!-- FAQ -->
@@ -81,6 +95,12 @@
           <li><i class="text-white text-2xl fab fa-facebook-square"></i></li>
         </div>
       </div>
+      <script>
+          function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('hidden');
+          }
+      </script>
     </footer>
   </body>
 </html>

@@ -159,7 +159,7 @@ app.post('/login', (req, res) => {
     }
 
     req.session.user = user;
-    res.redirect('/checks');
+    res.redirect('/dashboard');
   });
 });
 
