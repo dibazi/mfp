@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Bookmark Landing Page</title>
+  </head>
+  <body class="font-Poppins">
+    <!-- Header -->
+    <header>
+      <nav class="container flex items-center py-4 mt-4 sm:mt-12">
+        <div class="py-1"><img src="imgs/logo-bookmark.svg" alt="" /></div>
+        <ul class="hidden sm:flex flex-1 justify-end items-center gap-12 text-bookmark-blue uppercase text-xs">
+            <li class="cursor-pointer"><a href="/checkoutdailys">CheckOutS</a></li>
+            <li class="cursor-pointer"><a href="/dailys">CheckInS</a></li>
+            <li class="cursor-pointer"><a href="/checks">Checks</a></li>
+          <button type="button" class="bg-bookmark-red text-white rounded-md px-7 py-3 uppercase">Login</button>
+        </ul>
+        <div class="flex sm:hidden flex-1 justify-end">
+          <i class="text-2xl fas fa-bars"></i>
+        </div>
+      </nav>
+    </header>
+
+    <!-- FAQ -->
+<section class="bg-bookmark-white py-20">
+<div class="container">
+  <div class="lg:w-2/4 mx-auto py-8 px-6 bg-white rounded-xl">
+    <h1 class="font-bold text-5xl text-center mb-8">Employee check in list</h1>
+    <hr>
+    <div class="mt-2">
+      <% check_ins.sort((a, b) => a.id - b.id).forEach(check_in => { %>
+      <div class="py-4 flex items-center border-b border-gray-300 py-3">
+        <div class="flex-1 pr-8">
+          <% if (check_in.user_name) { %>
+            <h3 class="text-lg font-semibold"><%= check_in.check_in %></h3>
+          <% } else { %>
+            <h3 class="text-lg font-semibold">user_name not found</h3>
+          <% } %>
+          <p class="text-gray-500"><%= check_in.user_name %></p>
+        </div>
+        <div class="flex space-x-3">
+          <button class="py-2 px-2 bg-green-500 text-white rounded-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+</div>
+</footer>
+</body>
+</html>

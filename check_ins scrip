@@ -1,0 +1,10 @@
+CREATE TABLE `check_out` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT UNSIGNED NOT NULL,
+  `check_out` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `user_id` (`user_id`),
+  CONSTRAINT `check_out_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+)
+COLLATE='utf8_general_ci'
+ENGINE=INNODB;

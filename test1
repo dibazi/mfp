@@ -1,0 +1,153 @@
+// Import required modules
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const flash = require('express-flash');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
+const bcrypt = require('bcrypt');
+const qrcode = require('qrcode');
+
+
+const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+// Create a new Express app
+app.use(bodyParser.json());
+
+// Set up session middleware
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+//acces css file
+app.use(express.static(__dirname = "public"));
+
+// Set the view engine to EJS
+app.set('view engine', 'ejs');
+
+// Serve the index.ejs file
+app.get('/', async (req, res) => {
+  const url = 'https://express.senga-service.com/';
+  const dataURL = await qrcode.toDataURL(url);
+  res.render('index', { dataURL });
+});
+
+// Set up body-parser middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Set up MySQL connection pool
+const pool = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'berthony',
+    database: 'mfp'
+});
+
+// Middleware to check for a session
+app.use((req, res, next) => {
+  if (req.session.user || req.path === '/login' || req.path === '/register') {
+    next();
+  } else {
+    res.redirect('/login');
+  }
+});
+
+app.get('/animation', (req, res) => {
+    res.render('animation.ejs');
+});
+
+// Render the registration form
+app.get('/register', (req, res) => {
+    res.render('register.ejs');
+});
+
+//qr
+app.get('/qr', (req, res) => {
+    res.render('qr.ejs');
+});
+
+// Process the registration form
+app.post('/register', (req, res) => {
+    const { user_name, email,password } = req.body;
+
+    // Hash the password
+    bcrypt.hash(password, 10, (err, hash) => {
+        if (err) {
+            console.log(err);
+            res.redirect('/register');
+            return;
+        }
+
+        // Insert the user into the database
+        pool.query('INSERT INTO users (user_name, email, password) VALUES (?, ?, ?)', [user_name, email,hash], (err, result) => {
+            if (err) {
+                console.log(err);
+                res.redirect('/register');
+                return;
+            }
+
+            res.redirect('/login');
+        });
+    });
+});
+
+//dashboard route
+app.get('/dashboard', (req, res) => {
+  res.render('dashboard.ejs');
+});
+
+//login route
+app.get('/login', (req, res) => {
+  res.render('login.ejs');
+});
+
+//login function
+app.post('/login', (req, res) => {
+  const { user_name, password } = req.body;
+
+  pool.query('SELECT * FROM users WHERE user_name = ?', [user_name], async (error, results) => {
+    if (error) {
+      console.log(error);
+      res.redirect('/login');
+      return;
+    }
+
+    if (results.length === 0) {
+      req.flash('error', 'Incorrect username');
+      res.redirect('/login');
+      return;
+    }
+
+    const user = results[0];
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      req.flash('error', 'Incorrect password');
+      res.redirect('/login');
+      return;
+    }
+
+    req.session.user = user;
+    res.redirect('/dashboard');
+  });
+});
+
+
+
+// logout
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/login');
+});
+
+// Start the server
+app.listen(3000, () => {
+    console.log('Server started on port 3000');
+});

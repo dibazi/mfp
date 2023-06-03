@@ -1,0 +1,160 @@
+// Render the check_in.ejs form
+app.get('/check_in', (req, res) => {
+  res.render('check_in.ejs');
+});
+
+// Process the check-in form
+app.post('/check_in', (req, res) => {
+  const { user_id, check_in } = req.body;
+
+  // Insert the check-in record into the database
+  pool.query('INSERT INTO check_ins (user_id, check_in) VALUES (?, ?)', [user_id, check_in], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.redirect('/check_in');
+      return;
+    }
+
+    res.redirect('/dashboard');
+  });
+});
+
+
+// Render the check_out.ejs form
+app.get('/check_out', (req, res) => {
+  res.render('check_out.ejs');
+});
+
+// Process the check-out form
+app.post('/check_out', (req, res) => {
+  const { user_id, check_out } = req.body;
+
+  // Insert the check-out record into the database
+  pool.query('INSERT INTO check_outs (user_id, check_out) VALUES (?, ?)', [user_id, check_out], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.redirect('/check_out');
+      return;
+    }
+
+    res.redirect('/dashboard');
+  });
+});
+
+// Second check
+
+// Function to check if the latest check-in record is older than 8 hours
+function isCheckInOlderThan8Hours(user_id, callback) {
+  pool.query(
+    'SELECT check_in FROM check_ins WHERE user_id = ? ORDER BY check_in DESC LIMIT 1',
+    [user_id],
+    (err, result) => {
+      if (err) {
+        callback(err);
+        return;
+      }
+
+      if (result.length === 0) {
+        // No check-in records found, show check-in form
+        callback(null, false);
+      } else {
+        const latestCheckIn = result[0].check_in;
+        const currentTime = new Date();
+        const elapsedTime = currentTime - latestCheckIn;
+        const elapsedHours = elapsedTime / (1000 * 60 * 60); // Convert milliseconds to hours
+
+        if (elapsedHours >= 8) {
+          // Last check-in is older than 8 hours, show check-out form
+          callback(null, true);
+        } else {
+          // Last check-in is within 8 hours, show check-in form
+          callback(null, false);
+        }
+      }
+    }
+  );
+}
+
+// Render the appropriate form based on check-in status
+app.get('/check', (req, res) => {
+  const user_id = req.session.user.id;
+
+  isCheckInOlderThan8Hours(user_id, (err, isCheckInOlder) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+
+    if (isCheckInOlder) {
+      res.render('check_out.ejs', { user: req.session.user });
+    } else {
+      res.render('check_in.ejs', { user: req.session.user });
+    }
+  });
+});
+
+// Process the check-in form
+app.post('/check_in', (req, res) => {
+  // Insert the check-in record into the database
+  const { user_id, check_in } = req.body;
+
+  pool.query(
+    'INSERT INTO check_ins (user_id, check_in) VALUES (?, ?)',
+    [user_id, check_in],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.redirect('/check');
+        return;
+      }
+
+      res.redirect('/dashboard');
+    }
+  );
+});
+
+// Process the check-out form
+app.post('/check_out', (req, res) => {
+  // Insert the check-out record into the database
+  const { user_id, check_out } = req.body;
+
+  pool.query(
+    'INSERT INTO check_outs (user_id, check_out) VALUES (?, ?)',
+    [user_id, check_out],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        res.redirect('/check');
+        return;
+      }
+
+      res.redirect('/dashboard');
+    }
+  );
+});
+
+//Acces to check_outs
+
+// Render the check_out.ejs form
+app.get('/check_out', (req, res) => {
+    res.render('check_out.ejs');
+  });
+  
+  // Process the check-out form
+  app.post('/check_out', (req, res) => {
+    const { user_id } = req.session.user; // Get the user_id from the session
+    const check_out = new Date().toISOString().slice(0, 19).replace('T', ' '); // Get the current date and time in the format YYYY-MM-DD HH:mm:ss
+  
+    // Insert the check-out record into the database
+    pool.query('INSERT INTO check_out (user_id, check_out) VALUES (?, ?)', [user_id, check_out], (err, result) => {
+      if (err) {
+        console.log(err);
+        res.redirect('/check_out');
+        return;
+      }
+  
+      res.redirect('/dashboard');
+    });
+  });
+  

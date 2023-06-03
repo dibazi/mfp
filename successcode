@@ -1,0 +1,130 @@
+// Import required modules
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const flash = require('express-flash');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
+const bcrypt = require('bcrypt');
+const qrcode = require('qrcode');
+
+const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+// Create a new Express app
+app.use(bodyParser.json());
+
+// Set up session middleware
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+// Set up the view engine to EJS
+app.set('view engine', 'ejs');
+
+// Serve static files from the "public" directory
+app.use(express.static(__dirname + '/public'));
+
+// Set up MySQL connection pool
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'berthony',
+  database: 'mfp'
+});
+
+// Configure Passport
+passport.use(new LocalStrategy(
+  (username, password, done) => {
+    pool.query('SELECT * FROM users WHERE user_name = ?', [username], async (error, results) => {
+      if (error) {
+        return done(error);
+      }
+
+      if (results.length === 0) {
+        return done(null, false, { message: 'Incorrect username' });
+      }
+
+      const user = results[0];
+      const match = await bcrypt.compare(password, user.password);
+
+      if (!match) {
+        return done(null, false, { message: 'Incorrect password' });
+      }
+
+      return done(null, user);
+    });
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  pool.query('SELECT * FROM users WHERE id = ?', [id], (error, results) => {
+    if (error || results.length === 0) {
+      return done(error);
+    }
+
+    const user = results[0];
+    done(null, user);
+  });
+});
+
+// Middleware to check for a session and make user available in views
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
+
+// Serve the index.ejs file
+app.get('/', async (req, res) => {
+  const url = 'https://express.senga-service.com/';
+  const dataURL = await qrcode.toDataURL(url);
+  res.render('index', { dataURL });
+});
+
+// Render the login form
+app.get('/login', (req, res) => {
+  res.render('login.ejs');
+});
+
+// Process the login form
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/dashboard',
+  failureRedirect: '/login',
+  failureFlash: true
+}));
+
+// Render the dashboard view
+app.get('/dashboard', (req, res) => {
+  // Check if the user is authenticated
+  if (!req.user) {
+    // User is not authenticated, redirect to the login page
+    res.redirect('/login');
+    return;
+  }
+
+  // User is authenticated, render the dashboard view
+  res.render('dashboard.ejs');
+});
+
+// ... Rest of your routes ...
+
+// logout
+app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+  });
+
+  // Start the server
+app.listen(3000, () => {
+    console.log('Server started on port 3000');
+  });

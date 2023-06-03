@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Check-in</title>
+</head>
+<body>
+  <h1>Create Check-in</h1>
+  <form action="/check_in" method="POST">
+        <!-- Hidden field for user_id -->
+        <input type="hidden" name="user_id" id="user_id" value="<%= user.id %>">
+    <div>
+      <button type="submit">Create Check-in</button>
+    </div>
+  </form>
+  <a href="/dashboard">Go back to Dashboard</a>
+  <a href="/dailys">Go to Check in list</a>
+</body>
+</html>

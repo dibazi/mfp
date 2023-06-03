@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create Check-out</title>
+</head>
+<body>
+  <h1>Create Check-out for user <%= user.id %></h1>
+  <form action="/check_out" method="POST">
+        <!-- Hidden field for user_id -->
+    <input type="hidden" name="user_id" id="user_id" value="<%= user.id %>">
+    <div>
+      <button type="submit">Create Check-out</button>
+    </div>
+  </form>
+  <a href="/dashboard">Go back to Dashboard</a>
+</body>
+</html>
