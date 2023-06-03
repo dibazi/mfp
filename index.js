@@ -41,7 +41,7 @@ app.use(express.static(__dirname = "public"));
 app.set('view engine', 'ejs');
 
 // Serve the index.ejs file
-app.get('/', async (req, res) => {
+app.get('/qr', async (req, res) => {
   const url = 'https://express.senga-service.com/';
   const dataURL = await qrcode.toDataURL(url);
   res.render('index', { dataURL });
