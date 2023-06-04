@@ -159,7 +159,7 @@ app.post('/login', (req, res) => {
     }
 
     req.session.user = user;
-    res.redirect('/dashboard');
+    res.redirect('/checks');
   });
 });
 
@@ -314,10 +314,11 @@ app.get('/checks', (req, res) => {
 
 
 // logout
-app.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/login');
+app.get('/logout', function(req, res) {
+  req.logout(); // Call the logout function
+  res.redirect('/'); // Redirect the user to the homepage or any desired location after logout
 });
+
 
 // Start the server
 app.listen(3000, () => {
