@@ -313,11 +313,20 @@ app.get('/checks', (req, res) => {
 
 
 
-// logout
-app.get('/logout', function(req, res) {
-  req.logout(); // Call the logout function
-  res.redirect('/'); // Redirect the user to the homepage or any desired location after logout
+// Logout route
+app.get('/logout', (req, res) => {
+  req.logout(function(err) {
+    if (err) {
+      console.log(err);
+      res.redirect('/');
+      return;
+    }
+
+    // Redirect the user to the desired page after successful logout
+    res.redirect('/login');
+  });
 });
+
 
 
 // Start the server
