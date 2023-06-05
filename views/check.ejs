@@ -27,88 +27,74 @@
             <i class="text-2xl fas fa-bars"></i>
           </button>
           <ul class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg hidden" id="dropdownMenu">
-            <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/checkoutdailys">CheckOutS</a></li>
-            <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/dailys">CheckInS</a></li>
+           <!--<li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/checkoutdailys">CheckOutS</a></li>
+            <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/dailys">CheckInS</a></li>--> 
+            <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/checks"><%= user.username %></a></li> 
             <li class="text-bookmark-red cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/logout">logout</a></li>
           </ul>
         </div>
       
         <!-- Menu items -->
         <ul class="hidden sm:flex flex-1 justify-end items-center gap-12 text-bookmark-blue uppercase text-xs" id="menuItems">
-          <li class="cursor-pointer"><a href="/checkoutdailys">CheckOutS</a></li>
-          <li class="cursor-pointer"><a href="/dailys">CheckInS</a></li>
-          <li class="cursor-pointer"><a href="/logout">Logout</a></li>
+         <!-- <li class="cursor-pointer"><a href="/checkoutdailys">CheckOutS</a></li>-->
+          <li class="cursor-pointer"><a href="/dailys"><%= user.user_name %></a></li>
+          <li class="cursor-pointer"><a href="/checks">Logout</a></li>
           <li class="cursor-pointer py-2 px-4 hover:bg-gray-200"><a href="/logout" class="text-bookmark-red"></a></li>
         </ul>
       </nav>
+      
     </header>
 
     <!-- FAQ -->
     <section class="bg-bookmark-white py-20">
-      <div class="container">
-        <!-- Heading -->
-        <div class="sm:w-3/4 lg:w-5/12 mx-auto px-2">
-          <h1 class="text-3xl text-center text-bookmark-blue">Check in by pressing button down </h1>
-        </div>
-        <!-- FAQ Items -->
-        <div class="flex flex-col sm:w-3/4 lg:w-5/12 mt-12 mx-auto ">
-            <div class="flex items-center border-b py-4 justify-center">
-              <i class="text-bookmark-purple fas fa-chevron-down"></i>
+          <% if (checkOuts.length > 0) { %>
+          <div class="container">
+            <!-- Heading -->
+            <div class="sm:w-3/4 lg:w-5/12 mx-auto px-2">
+              <h1 class="text-3xl text-center text-bookmark-blue">Check out by pressing button down </h1>
             </div>
-            <div class="flex items-center border-b py-4 justify-center">
-              <i class="text-bookmark-purple fas fa-chevron-down"></i>
-            </div>
-            <div class="flex items-center border-b py-4 justify-center">
-              <i class="text-bookmark-purple fas fa-chevron-down"></i>
-            </div>
-            <div class="flex items-center border-b py-4 justify-center">
-              <i class="text-bookmark-purple fas fa-chevron-down"></i>
-            </div>
-          </div>
-          <div class="flex items-center border-b py-4 justify-center">
+              <!-- FAQ Items -->
 
-            <% if (checkOuts.length > 0) { %>
+              <div class="flex items-center border-b py-4 justify-center">
 
-                <form action="/check_out" method="POST">
-                      <!-- Hidden field for user_id -->
-                  <input type="hidden" name="user_id" id="user_id" value="<%= user.id %>">
-                  <button type="submit" class="bg-sky-500/75 mt-12 flex self-center btn btn-purple hover:bg-bookmark-white hover:text-black justify-center">
-                    Check out
-                  </button>
-                </form>
-                    <% checkOuts.forEach(checkOut => { %>
-            
-                        <%= checkOut.check_out %>
-            
-                    <% }); %>
-            
-              <% } else { %>
-
-                <form action="/check_in" method="POST">
-                      <!-- Hidden field for user_id -->
+                    <form action="/check_out" method="POST">
+                          <!-- Hidden field for user_id -->
                       <input type="hidden" name="user_id" id="user_id" value="<%= user.id %>">
                       <button type="submit" class="bg-sky-500/75 mt-12 flex self-center btn btn-purple hover:bg-bookmark-white hover:text-black justify-center">
-                        Check in
+                        Check out
                       </button>
-                </form>
-              <% } %>
-            
-          </div>
-        </div>
-          
-        </div>
-      </div>
+                    </form>
+              </div>
+            </div>
+          <% checkOuts.forEach(checkOut => { %><%= checkOut.check_out %> <% }); %>
+                
+          <% } else { %>
+                <div class="container">
+                              <!-- Heading -->
+                  <div class="sm:w-3/4 lg:w-5/12 mx-auto px-2">
+                          <h1 class="text-3xl text-center text-bookmark-blue">Check in by pressing button down </h1>
+                        </div>
+                        <!-- FAQ Items -->
+                
+                        <div class="flex items-center border-b py-4 justify-center">
+
+                            <form action="/check_in" method="POST">
+                                  <!-- Hidden field for user_id -->
+                                  <input type="hidden" name="user_id" id="user_id" value="<%= user.id %>">
+                                  <button type="submit" class="bg-sky-500/75 mt-12 flex self-center btn btn-purple hover:bg-bookmark-white hover:text-black justify-center">
+                                    Check in
+                                  </button>
+                            </form>
+                        </div>
+                </div>
+          <% } %>
+
     </section>
-
-    <!-- Footer -->
-    <footer class="bg-bookmark-blue py-8">
-
-      <script>
-        function toggleDropdown() {
-          const dropdownMenu = document.getElementById('dropdownMenu');
-          dropdownMenu.classList.toggle('hidden');
-        }
-    </script>
-    </footer>
+    <script>
+      function toggleDropdown() {
+        const dropdownMenu = document.getElementById('dropdownMenu');
+        dropdownMenu.classList.toggle('hidden');
+      }
+  </script>
   </body>
 </html>
