@@ -174,15 +174,17 @@ app.get('/check_out', (req, res) => {
 app.post('/check_out', (req, res) => {
   // Insert the check-out record into the database
   const { user_id } = req.body;
-const currentDate = new Date();
-const year = currentDate.getFullYear();
-const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-const day = String(currentDate.getDate()).padStart(2, '0');
-const hours = String(currentDate.getHours()).padStart(2, '0');
-const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+  const currentDate = new Date();
+  const johannesburgOffset = 2; // Johannesburg is UTC+2
+  const johannesburgTime = new Date(currentDate.getTime() + johannesburgOffset * 60 * 60 * 1000);
+  const year = johannesburgTime.getFullYear();
+  const month = String(johannesburgTime.getMonth() + 1).padStart(2, '0');
+  const day = String(johannesburgTime.getDate()).padStart(2, '0');
+  const hours = String(johannesburgTime.getHours()).padStart(2, '0');
+  const minutes = String(johannesburgTime.getMinutes()).padStart(2, '0');
+  const seconds = String(johannesburgTime.getSeconds()).padStart(2, '0');
 
-const check_out = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  const check_out = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
   pool.query(
     'INSERT INTO mfp_check_outs (user_id, check_out) VALUES (?, ?)',
@@ -209,15 +211,17 @@ app.post('/check_in', (req, res) => {
   // Insert the check-in record into the database
   const { user_id } = req.body;
 
-const currentDate = new Date();
-const year = currentDate.getFullYear();
-const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-const day = String(currentDate.getDate()).padStart(2, '0');
-const hours = String(currentDate.getHours()).padStart(2, '0');
-const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+  const currentDate = new Date();
+  const johannesburgOffset = 2; // Johannesburg is UTC+2
+  const johannesburgTime = new Date(currentDate.getTime() + johannesburgOffset * 60 * 60 * 1000);
+  const year = johannesburgTime.getFullYear();
+  const month = String(johannesburgTime.getMonth() + 1).padStart(2, '0');
+  const day = String(johannesburgTime.getDate()).padStart(2, '0');
+  const hours = String(johannesburgTime.getHours()).padStart(2, '0');
+  const minutes = String(johannesburgTime.getMinutes()).padStart(2, '0');
+  const seconds = String(johannesburgTime.getSeconds()).padStart(2, '0');
 
-const check_in = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  const check_in = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
   
   pool.query(
