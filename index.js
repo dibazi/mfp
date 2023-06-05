@@ -42,7 +42,7 @@ app.set('view engine', 'ejs');
 
 // Serve the index.ejs file
 app.get('/qr', async (req, res) => {
-  const url = 'https://express.senga-service.com/';
+  const url = 'https://dl-register.onrender.com/checks';
   const dataURL = await qrcode.toDataURL(url);
   res.render('index', { dataURL });
   
