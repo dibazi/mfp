@@ -41,7 +41,7 @@ app.use(express.static(__dirname = "public"));
 app.set('view engine', 'ejs');
 
 // Serve the index.ejs file
-app.get('/qr', async (req, res) => {
+app.get('/', async (req, res) => {
   const url = 'https://dl-register.onrender.com/checks';
   const dataURL = await qrcode.toDataURL(url);
   res.render('index', { dataURL });
@@ -81,6 +81,14 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   res.locals.user = req.session.user; // Pass the user data to the views
   next();
+});
+
+app.get('/checkin-success', (req, res) => {
+  res.render('checkin-success.ejs');
+});
+
+app.get('/checkout-success', (req, res) => {
+  res.render('checkout-success.ejs');
 });
 
 app.get('/animation', (req, res) => {
@@ -196,7 +204,7 @@ app.post('/check_out', (req, res) => {
         return;
       }
 
-      res.redirect('/checks');
+      res.redirect('/checkout-success');
     }
   );
 });
@@ -236,7 +244,7 @@ app.post('/check_in', (req, res) => {
 
       // Display success message to the user
     //  res.render('success.ejs', { message: 'Check-in successful!' });
-    res.redirect('/checks');
+    res.redirect('/checkin-success');
     }
   );
 });
