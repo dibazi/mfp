@@ -91,18 +91,9 @@ app.get('/checkout-success', (req, res) => {
   res.render('checkout-success.ejs');
 });
 
-app.get('/animation', (req, res) => {
-    res.render('animation.ejs');
-});
-
 // Render the registration form
 app.get('/register', (req, res) => {
     res.render('register.ejs');
-});
-
-//qr
-app.get('/qr', (req, res) => {
-    res.render('qr.ejs');
 });
 
 // Process the registration form
@@ -128,11 +119,6 @@ app.post('/register', (req, res) => {
             res.redirect('/login');
         });
     });
-});
-
-//dashboard route
-app.get('/dashboard', (req, res) => {
-  res.render('dashboard.ejs');
 });
 
 //login route
@@ -167,15 +153,8 @@ app.post('/login', (req, res) => {
     }
 
     req.session.user = user;
-    res.redirect('/checks');
+    res.redirect('/dashboard');
   });
-});
-
-//Acces to check_outs
-
-// Render the check_out.ejs form
-app.get('/check_out', (req, res) => {
-  res.render('check_out.ejs');
 });
 
 // Process the check-out form
@@ -249,60 +228,43 @@ app.post('/check_in', (req, res) => {
   );
 });
 
-// Render the check_out.ejs form
-app.get('/check_out', (req, res) => {
-  res.render('check_out.ejs');
-});
 
-// Render the daily form
-app.get('/daily', (req, res) => {
-  res.render('daily.ejs');
-});
 
 // Route to render the view with check-in records and user names
-app.get('/dailys', (req, res) => {
-  const sql = 'SELECT mfp_check_ins.id, mfp_check_ins.check_in, mfp_users.user_name FROM mfp_check_ins JOIN mfp_users ON mfp_check_ins.user_id = mfp_users.id';
+app.get('/check_ins', (req, res) => {
+  const sql = 'SELECT mfp_check_ins.id, mfp_check_ins.check_in, mfp_users.user_name FROM mfp_check_ins JOIN mfp_users ON mfp_check_ins.user_id = mfp_users.id ORDER BY mfp_check_ins.id DESC';
 
   // Execute the SQL query
   pool.query(sql, (err, results) => {
     if (err) {
       console.log(err);
-      res.redirect('/checks');
+      res.redirect('/dashboard');
       return;
     }
 
     // Render the view and pass the results to it
-    res.render('daily', { check_ins: results });
+    res.render('check_ins', { check_ins: results });
   });
 });
 
-// Render the daily form
-app.get('/checkoutdaily', (req, res) => {
-  res.render('daily.ejs');
-});
-
 // Route to render the view with check-in records and user names
-app.get('/checkoutdailys', (req, res) => {
-  const sql = 'SELECT mfp_check_outs.id, mfp_check_outs.check_out, mfp_users.user_name FROM mfp_check_outs JOIN mfp_users ON mfp_check_outs.user_id = mfp_users.id';
+app.get('/check_outs', (req, res) => {
+  const sql = 'SELECT mfp_check_outs.id, mfp_check_outs.check_out, mfp_users.user_name FROM mfp_check_outs JOIN mfp_users ON mfp_check_outs.user_id = mfp_users.id ORDER BY mfp_check_outs.check_out DESC';
 
   // Execute the SQL query
   pool.query(sql, (err, results) => {
     if (err) {
       console.log(err);
-      res.redirect('/checks');
+      res.redirect('/dashboard');
       return;
     }
 
     // Render the view and pass the results to it
-    res.render('checkoutdaily', { check_outs: results });
+    res.render('check_outs', { check_outs: results });
   });
 });
 
-app.get('/daily', (req, res) => {
-  res.render('daily.ejs');
-});
-
-app.get('/checks', (req, res) => {
+app.get('/dashboard', (req, res) => {
 
     // Query the database to get check-outs created today
   const currentDate = moment().format('YYYY-MM-DD');
@@ -318,16 +280,15 @@ app.get('/checks', (req, res) => {
       }
 
       // Render the EJS template and pass the checkOuts array
-      res.render('check', { checkOuts: results });
+      res.render('dashboard', { checkOuts: results });
     }
   );
 });
 
-
-
 // Logout route
 app.get('/logout', (req, res) => {
-  req.logout(function(err) {
+  // Destroy the session and logout the user
+  req.session.destroy(err => {
     if (err) {
       console.log(err);
       res.redirect('/');
@@ -338,8 +299,6 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
   });
 });
-
-
 
 // Start the server
 app.listen(3000, () => {
